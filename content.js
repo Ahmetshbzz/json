@@ -278,7 +278,7 @@ function addStyles() {
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-family: 'JetBrains Mono', monospace;
             transition: background-color 0.3s ease;
         }
 
