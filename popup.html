@@ -3,28 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <style>
+        :root {
+            --primary-color: #546de5;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --bg-color: #fff;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
         body {
-            width: 300px;
-            padding: 10px;
-            font-family: Arial, sans-serif;
+            width: 320px;
+            padding: 20px;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            color: var(--text-primary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
         .title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
+
         .description {
             font-size: 14px;
-            color: #666;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
-    <div class="title">JSON Görüntüleyici</div>
-    <div class="description">
-        Bu eklenti JSON verilerini otomatik olarak formatlar ve daha okunaklı hale getirir.
-        <br><br>
-        JSON içeren bir sayfayı açtığınızda otomatik olarak çalışacaktır.
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3 14h8v-2H8v2zm0-4h8v-2H8v2zm0-4h8V7H8v2z"/>
+                </svg>
+            </div>
+            <div class="title">JSON Görüntüleyici</div>
+        </div>
+        <div class="description">
+            JSON verilerini otomatik olarak formatlar ve şık bir görünüm sunar. Daha okunaklı, renkli kod vurgulama ve açılır-kapanır bölümler içerir.
+        </div>
+        <div class="footer">
+            v1.0 — JSON verilerinizi daha güzel görüntüleyin
+        </div>
     </div>
 </body>
 </html> 
