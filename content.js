@@ -227,36 +227,36 @@ function addStyles() {
     styleElement.textContent = `
         :root {
             /* Dark theme (default) */
-            --bg-color: #121212;
-            --container-bg: #1a1a1a; 
-            --toolbar-bg: #252525;
-            --border-color: #333;
-            --shadow-color: rgba(0, 0, 0, 0.2);
-            --text-color: #e0e0e0;
-            --key-color: #88c0d0;
-            --string-color: #a3be8c;
-            --number-color: #b48ead;
-            --boolean-color: #81a1c1;
-            --null-color: #ebcb8b;
-            --toggle-color: #81a1c1;
-            --btn-hover: #363636;
+            --bg-color: #0d1117;
+            --container-bg: #161b22; 
+            --toolbar-bg: #21262d;
+            --border-color: #30363d;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --text-color: #e6edf3;
+            --key-color: #61afef;
+            --string-color: #98c379;
+            --number-color: #c678dd;
+            --boolean-color: #56b6c2;
+            --null-color: #e5c07b;
+            --toggle-color: #61afef;
+            --btn-hover: #30363d;
         }
         
         body.light-theme {
             /* Light theme */
-            --bg-color: #f8f9fa;
+            --bg-color: #f6f8fa;
             --container-bg: #ffffff;
-            --toolbar-bg: #f1f3f5;
-            --border-color: #e9ecef;
+            --toolbar-bg: #f0f2f5;
+            --border-color: #d0d7de;
             --shadow-color: rgba(0, 0, 0, 0.05);
-            --text-color: #343a40;
-            --key-color: #0c8599;
-            --string-color: #2b8a3e;
-            --number-color: #5f3dc4;
-            --boolean-color: #1864ab;
-            --null-color: #e67700;
-            --toggle-color: #1864ab;
-            --btn-hover: #e9ecef;
+            --text-color: #24292f;
+            --key-color: #2a7fff;
+            --string-color: #28a745;
+            --number-color: #9333ea;
+            --boolean-color: #0ea5e9;
+            --null-color: #f59e0b;
+            --toggle-color: #2a7fff;
+            --btn-hover: #ebecf0;
         }
 
         body {
