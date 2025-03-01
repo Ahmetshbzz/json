@@ -2,6 +2,17 @@ function createToolbar() {
     const toolbar = document.createElement('div');
     toolbar.className = 'json-toolbar';
     
+    // Ayarlar butonu
+    const settingsButton = document.createElement('button');
+    settingsButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>`;
+    settingsButton.title = "Ayarlar";
+    settingsButton.onclick = () => {
+        showSettingsModal();
+    };
+    
     // Tema değiştirme butonu
     const themeToggleButton = document.createElement('button');
     themeToggleButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -87,6 +98,7 @@ function createToolbar() {
         }
     };
     
+    toolbar.appendChild(settingsButton);
     toolbar.appendChild(themeToggleButton);
     toolbar.appendChild(expandCollapseButton);
     toolbar.appendChild(refreshButton);
@@ -392,6 +404,156 @@ function addStyles() {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
+
+        /* Ayarlar Modal stilleri */
+        .json-settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .json-settings-modal.show {
+            opacity: 1;
+        }
+        
+        .json-settings-content {
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .json-settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .json-settings-header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .json-settings-close {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            margin: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .json-settings-body {
+            padding: 20px;
+        }
+        
+        .json-settings-section {
+            margin-bottom: 24px;
+        }
+        
+        .json-settings-section h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+        
+        .json-settings-section p {
+            margin: 0 0 16px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .json-settings-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .json-color-option {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .json-color-option label {
+            font-size: 14px;
+        }
+        
+        .json-color-option input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        
+        .json-settings-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .json-settings-buttons button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .json-settings-buttons button#resetColors {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .json-settings-buttons button#saveColors {
+            background-color: var(--key-color);
+            border: 1px solid var(--key-color);
+            color: white;
+        }
+        
+        .json-settings-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
     `;
     document.head.appendChild(styleElement);
     
@@ -399,6 +561,12 @@ function addStyles() {
     const savedTheme = localStorage.getItem('jsonViewerTheme');
     if (savedTheme === 'light') {
         document.body.classList.add('light-theme');
+    }
+    
+    // Özel renkleri uygula
+    const customColors = JSON.parse(localStorage.getItem('jsonViewerCustomColors') || '{}');
+    if (Object.keys(customColors).length > 0) {
+        applyCustomColors(customColors);
     }
 }
 
@@ -438,10 +606,179 @@ function init() {
     }
 }
 
-// Artık bu fonksiyonlara ihtiyacımız yok
-// function collapseJSON() { ... }
-// function expandJSON() { ... }
-// function formatCollapsedJSON() { ... }
+// Ayarlar modalı oluşturma
+function createSettingsModal() {
+    const modal = document.createElement('div');
+    modal.className = 'json-settings-modal';
+    modal.innerHTML = `
+        <div class="json-settings-content">
+            <div class="json-settings-header">
+                <h2>JSON Görüntüleyici Ayarları</h2>
+                <button class="json-settings-close">&times;</button>
+            </div>
+            <div class="json-settings-body">
+                <div class="json-settings-section">
+                    <h3>Renk Ayarları</h3>
+                    <p>Görüntüleyici için renkleri özelleştirin:</p>
+                    
+                    <div class="json-settings-colors">
+                        <div class="json-color-option">
+                            <label for="keyColor">Anahtar Rengi:</label>
+                            <input type="color" id="keyColor" name="keyColor">
+                        </div>
+                        
+                        <div class="json-color-option">
+                            <label for="stringColor">String Değer Rengi:</label>
+                            <input type="color" id="stringColor" name="stringColor">
+                        </div>
+                        
+                        <div class="json-color-option">
+                            <label for="numberColor">Sayı Rengi:</label>
+                            <input type="color" id="numberColor" name="numberColor">
+                        </div>
+                        
+                        <div class="json-color-option">
+                            <label for="booleanColor">Boolean Rengi:</label>
+                            <input type="color" id="booleanColor" name="booleanColor">
+                        </div>
+                        
+                        <div class="json-color-option">
+                            <label for="nullColor">Null Rengi:</label>
+                            <input type="color" id="nullColor" name="nullColor">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="json-settings-buttons">
+                    <button id="resetColors">Varsayılan Renklere Dön</button>
+                    <button id="saveColors">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Modal kapama butonunu işlevselleştir
+    modal.querySelector('.json-settings-close').addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    // Modal dışına tıklandığında kapanma
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    });
+    
+    // Renkleri kaydet
+    modal.querySelector('#saveColors').addEventListener('click', () => {
+        const keyColor = modal.querySelector('#keyColor').value;
+        const stringColor = modal.querySelector('#stringColor').value;
+        const numberColor = modal.querySelector('#numberColor').value;
+        const booleanColor = modal.querySelector('#booleanColor').value;
+        const nullColor = modal.querySelector('#nullColor').value;
+        
+        // Renkleri localStorage'da sakla
+        const customColors = {
+            keyColor,
+            stringColor,
+            numberColor,
+            booleanColor,
+            nullColor
+        };
+        
+        localStorage.setItem('jsonViewerCustomColors', JSON.stringify(customColors));
+        
+        // Renkleri uygula
+        applyCustomColors(customColors);
+        
+        // Modal'ı kapat
+        document.body.removeChild(modal);
+        
+        // Başarı mesajı göster
+        showToast('Renk ayarları kaydedildi');
+    });
+    
+    // Varsayılan renklere dön
+    modal.querySelector('#resetColors').addEventListener('click', () => {
+        localStorage.removeItem('jsonViewerCustomColors');
+        
+        // Varsayılan renkleri yükle
+        const isLightTheme = document.body.classList.contains('light-theme');
+        
+        if (isLightTheme) {
+            modal.querySelector('#keyColor').value = '#2a7fff';
+            modal.querySelector('#stringColor').value = '#28a745';
+            modal.querySelector('#numberColor').value = '#9333ea';
+            modal.querySelector('#booleanColor').value = '#0ea5e9';
+            modal.querySelector('#nullColor').value = '#f59e0b';
+        } else {
+            modal.querySelector('#keyColor').value = '#61afef';
+            modal.querySelector('#stringColor').value = '#98c379';
+            modal.querySelector('#numberColor').value = '#c678dd';
+            modal.querySelector('#booleanColor').value = '#56b6c2';
+            modal.querySelector('#nullColor').value = '#e5c07b';
+        }
+        
+        // Renkleri sıfırla (CSS değişkenlerini varsayılana getir)
+        document.documentElement.style.removeProperty('--key-color');
+        document.documentElement.style.removeProperty('--string-color');
+        document.documentElement.style.removeProperty('--number-color');
+        document.documentElement.style.removeProperty('--boolean-color');
+        document.documentElement.style.removeProperty('--null-color');
+        
+        showToast('Renkler varsayılana döndürüldü');
+    });
+    
+    return modal;
+}
+
+// Ayarlar modalını göster
+function showSettingsModal() {
+    const modal = createSettingsModal();
+    document.body.appendChild(modal);
+    
+    // Mevcut renkleri input'lara yükle
+    const customColors = JSON.parse(localStorage.getItem('jsonViewerCustomColors') || '{}');
+    const isLightTheme = document.body.classList.contains('light-theme');
+    
+    // Varsayılan renkler
+    const defaultColors = isLightTheme ? {
+        keyColor: '#2a7fff',
+        stringColor: '#28a745',
+        numberColor: '#9333ea',
+        booleanColor: '#0ea5e9',
+        nullColor: '#f59e0b'
+    } : {
+        keyColor: '#61afef',
+        stringColor: '#98c379',
+        numberColor: '#c678dd',
+        booleanColor: '#56b6c2',
+        nullColor: '#e5c07b'
+    };
+    
+    // Input'ları mevcut veya varsayılan renklerle doldur
+    modal.querySelector('#keyColor').value = customColors.keyColor || defaultColors.keyColor;
+    modal.querySelector('#stringColor').value = customColors.stringColor || defaultColors.stringColor;
+    modal.querySelector('#numberColor').value = customColors.numberColor || defaultColors.numberColor;
+    modal.querySelector('#booleanColor').value = customColors.booleanColor || defaultColors.booleanColor;
+    modal.querySelector('#nullColor').value = customColors.nullColor || defaultColors.nullColor;
+    
+    // Modal animasyonu
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+}
+
+// Özel renkleri uygula
+function applyCustomColors(colors) {
+    if (colors) {
+        document.documentElement.style.setProperty('--key-color', colors.keyColor);
+        document.documentElement.style.setProperty('--string-color', colors.stringColor);
+        document.documentElement.style.setProperty('--number-color', colors.numberColor);
+        document.documentElement.style.setProperty('--boolean-color', colors.booleanColor);
+        document.documentElement.style.setProperty('--null-color', colors.nullColor);
+    }
+}
 
 // Sayfa yüklendiğinde çalıştır
 if (document.readyState === 'loading') {
