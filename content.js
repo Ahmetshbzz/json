@@ -1,7 +1,7 @@
 function createToolbar() {
     const toolbar = document.createElement('div');
     toolbar.className = 'json-toolbar';
-    
+
     // Ayarlar butonu
     const settingsButton = document.createElement('button');
     settingsButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -12,7 +12,7 @@ function createToolbar() {
     settingsButton.onclick = () => {
         showSettingsModal();
     };
-    
+
     // Tema değiştirme butonu
     const themeToggleButton = document.createElement('button');
     themeToggleButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -24,7 +24,7 @@ function createToolbar() {
         document.body.classList.toggle('light-theme');
         localStorage.setItem('jsonViewerTheme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
     };
-    
+
     // Yenile butonu
     const refreshButton = document.createElement('button');
     refreshButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -34,7 +34,7 @@ function createToolbar() {
     refreshButton.onclick = () => {
         location.reload();
     };
-    
+
     // Kopyalama butonu
     const copyButton = document.createElement('button');
     copyButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -57,7 +57,7 @@ function createToolbar() {
             }, 2000);
         });
     };
-    
+
     // Tüm öğeleri genişlet/daralt butonu
     const expandCollapseButton = document.createElement('button');
     expandCollapseButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,7 +70,7 @@ function createToolbar() {
         const state = expandCollapseButton.dataset.state;
         const toggleButtons = document.querySelectorAll('.toggle-btn');
         const collapsibles = document.querySelectorAll('.collapsible');
-        
+
         if (state === 'expanded') {
             toggleButtons.forEach(btn => {
                 btn.textContent = '▶';
@@ -97,7 +97,7 @@ function createToolbar() {
             </svg>`;
         }
     };
-    
+
     toolbar.appendChild(settingsButton);
     toolbar.appendChild(themeToggleButton);
     toolbar.appendChild(expandCollapseButton);
@@ -219,12 +219,12 @@ function showToast(message) {
     toast.className = 'json-toast';
     toast.textContent = message;
     document.body.appendChild(toast);
-    
+
     // Animasyon ekleyin
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
-    
+
     // 3 saniye sonra kaldırın
     setTimeout(() => {
         toast.classList.remove('show');
@@ -234,13 +234,61 @@ function showToast(message) {
     }, 3000);
 }
 
+function createScrollButtons() {
+    const scrollContainer = document.createElement('div');
+    scrollContainer.className = 'json-scroll-buttons';
+
+    // Yukarı çıkma butonu
+    const scrollTopButton = document.createElement('button');
+    scrollTopButton.className = 'scroll-top-button';
+    scrollTopButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>`;
+    scrollTopButton.title = "Yukarı Çık";
+    scrollTopButton.onclick = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    // En aşağıya inme butonu
+    const scrollBottomButton = document.createElement('button');
+    scrollBottomButton.className = 'scroll-bottom-button';
+    scrollBottomButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>`;
+    scrollBottomButton.title = "En Aşağıya İn";
+    scrollBottomButton.onclick = () => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth'
+        });
+    };
+
+    // Butonları konteyner içine ekle
+    scrollContainer.appendChild(scrollTopButton);
+    scrollContainer.appendChild(scrollBottomButton);
+
+    // Scroll pozisyonuna göre yukarı çıkma butonunu göster/gizle
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollTopButton.classList.add('visible');
+        } else {
+            scrollTopButton.classList.remove('visible');
+        }
+    });
+
+    return scrollContainer;
+}
+
 function addStyles() {
     const styleElement = document.createElement('style');
     styleElement.textContent = `
         :root {
             /* Dark theme (default) */
             --bg-color: #0d1117;
-            --container-bg: #161b22; 
+            --container-bg: #161b22;
             --toolbar-bg: #21262d;
             --border-color: #30363d;
             --shadow-color: rgba(0, 0, 0, 0.3);
@@ -253,7 +301,7 @@ function addStyles() {
             --toggle-color: #61afef;
             --btn-hover: #30363d;
         }
-        
+
         body.light-theme {
             /* Light theme */
             --bg-color: #f6f8fa;
@@ -323,7 +371,7 @@ function addStyles() {
             transform: translateY(-2px);
             box-shadow: 0 2px 4px var(--shadow-color);
         }
-        
+
         .json-toolbar button:active {
             transform: translateY(0);
         }
@@ -381,7 +429,7 @@ function addStyles() {
         .collapsible.collapsed {
             display: none;
         }
-        
+
         .json-toast {
             position: fixed;
             bottom: 20px;
@@ -399,7 +447,7 @@ function addStyles() {
             font-size: 14px;
             border: 1px solid var(--border-color);
         }
-        
+
         .json-toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
@@ -420,11 +468,11 @@ function addStyles() {
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         .json-settings-modal.show {
             opacity: 1;
         }
-        
+
         .json-settings-content {
             background-color: var(--container-bg);
             border-radius: 12px;
@@ -437,7 +485,7 @@ function addStyles() {
             border: 1px solid var(--border-color);
             animation: modalSlideIn 0.3s ease;
         }
-        
+
         @keyframes modalSlideIn {
             from {
                 transform: translateY(-30px);
@@ -448,7 +496,7 @@ function addStyles() {
                 opacity: 1;
             }
         }
-        
+
         .json-settings-header {
             display: flex;
             justify-content: space-between;
@@ -456,13 +504,13 @@ function addStyles() {
             padding: 16px 20px;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .json-settings-header h2 {
             margin: 0;
             font-size: 18px;
             font-weight: 600;
         }
-        
+
         .json-settings-close {
             background: transparent;
             border: none;
@@ -478,42 +526,42 @@ function addStyles() {
             align-items: center;
             justify-content: center;
         }
-        
+
         .json-settings-body {
             padding: 20px;
         }
-        
+
         .json-settings-section {
             margin-bottom: 24px;
         }
-        
+
         .json-settings-section h3 {
             margin: 0 0 12px 0;
             font-size: 16px;
         }
-        
+
         .json-settings-section p {
             margin: 0 0 16px 0;
             color: var(--text-secondary);
             font-size: 14px;
         }
-        
+
         .json-settings-colors {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 16px;
         }
-        
+
         .json-color-option {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-        
+
         .json-color-option label {
             font-size: 14px;
         }
-        
+
         .json-color-option input[type="color"] {
             width: 100%;
             height: 40px;
@@ -522,14 +570,14 @@ function addStyles() {
             background-color: transparent;
             cursor: pointer;
         }
-        
+
         .json-settings-buttons {
             display: flex;
             justify-content: flex-end;
             gap: 12px;
             margin-top: 20px;
         }
-        
+
         .json-settings-buttons button {
             padding: 8px 16px;
             border-radius: 6px;
@@ -537,32 +585,77 @@ function addStyles() {
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .json-settings-buttons button#resetColors {
             background-color: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-color);
         }
-        
+
         .json-settings-buttons button#saveColors {
             background-color: var(--key-color);
             border: 1px solid var(--key-color);
             color: white;
         }
-        
+
         .json-settings-buttons button:hover {
             transform: translateY(-2px);
             box-shadow: 0 2px 4px var(--shadow-color);
         }
+
+        /* Scroll butonları stilleri */
+        .json-scroll-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .json-scroll-buttons button {
+            background-color: var(--toolbar-bg);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px var(--shadow-color);
+            transition: all 0.2s ease;
+            opacity: 0.8;
+        }
+
+        .json-scroll-buttons button:hover {
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+
+        .json-scroll-buttons .scroll-top-button {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .json-scroll-buttons .scroll-top-button.visible {
+            opacity: 0.8;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
     `;
     document.head.appendChild(styleElement);
-    
+
     // Tema ayarını local storage'dan al
     const savedTheme = localStorage.getItem('jsonViewerTheme');
     if (savedTheme === 'light') {
         document.body.classList.add('light-theme');
     }
-    
+
     // Özel renkleri uygula
     const customColors = JSON.parse(localStorage.getItem('jsonViewerCustomColors') || '{}');
     if (Object.keys(customColors).length > 0) {
@@ -572,22 +665,22 @@ function addStyles() {
 
 function init() {
     if (isFormatted) return;
-    
+
     const bodyText = document.body.textContent || document.body.innerText;
-    
+
     if (isJsonString(bodyText)) {
         try {
             const formattedJson = formatJSON(bodyText);
             document.body.innerHTML = '';
-            
+
             addStyles();
-            
+
             const container = createContainer();
             container.appendChild(createToolbar());
-            
+
             const pre = createStyledPre(formattedJson);
             container.appendChild(pre);
-            
+
             // Toggle işlevselliğini ekle
             pre.addEventListener('click', (e) => {
                 if (e.target.classList.contains('toggle-btn')) {
@@ -597,8 +690,12 @@ function init() {
                     e.target.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
                 }
             });
-            
+
             document.body.appendChild(container);
+
+            // Scroll butonlarını ekle
+            document.body.appendChild(createScrollButtons());
+
             isFormatted = true;
         } catch (e) {
             console.error('JSON formatting error:', e);
@@ -620,35 +717,35 @@ function createSettingsModal() {
                 <div class="json-settings-section">
                     <h3>Renk Ayarları</h3>
                     <p>Görüntüleyici için renkleri özelleştirin:</p>
-                    
+
                     <div class="json-settings-colors">
                         <div class="json-color-option">
                             <label for="keyColor">Anahtar Rengi:</label>
                             <input type="color" id="keyColor" name="keyColor">
                         </div>
-                        
+
                         <div class="json-color-option">
                             <label for="stringColor">String Değer Rengi:</label>
                             <input type="color" id="stringColor" name="stringColor">
                         </div>
-                        
+
                         <div class="json-color-option">
                             <label for="numberColor">Sayı Rengi:</label>
                             <input type="color" id="numberColor" name="numberColor">
                         </div>
-                        
+
                         <div class="json-color-option">
                             <label for="booleanColor">Boolean Rengi:</label>
                             <input type="color" id="booleanColor" name="booleanColor">
                         </div>
-                        
+
                         <div class="json-color-option">
                             <label for="nullColor">Null Rengi:</label>
                             <input type="color" id="nullColor" name="nullColor">
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="json-settings-buttons">
                     <button id="resetColors">Varsayılan Renklere Dön</button>
                     <button id="saveColors">Kaydet</button>
@@ -656,19 +753,19 @@ function createSettingsModal() {
             </div>
         </div>
     `;
-    
+
     // Modal kapama butonunu işlevselleştir
     modal.querySelector('.json-settings-close').addEventListener('click', () => {
         document.body.removeChild(modal);
     });
-    
+
     // Modal dışına tıklandığında kapanma
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             document.body.removeChild(modal);
         }
     });
-    
+
     // Renkleri kaydet
     modal.querySelector('#saveColors').addEventListener('click', () => {
         const keyColor = modal.querySelector('#keyColor').value;
@@ -676,7 +773,7 @@ function createSettingsModal() {
         const numberColor = modal.querySelector('#numberColor').value;
         const booleanColor = modal.querySelector('#booleanColor').value;
         const nullColor = modal.querySelector('#nullColor').value;
-        
+
         // Renkleri localStorage'da sakla
         const customColors = {
             keyColor,
@@ -685,26 +782,26 @@ function createSettingsModal() {
             booleanColor,
             nullColor
         };
-        
+
         localStorage.setItem('jsonViewerCustomColors', JSON.stringify(customColors));
-        
+
         // Renkleri uygula
         applyCustomColors(customColors);
-        
+
         // Modal'ı kapat
         document.body.removeChild(modal);
-        
+
         // Başarı mesajı göster
         showToast('Renk ayarları kaydedildi');
     });
-    
+
     // Varsayılan renklere dön
     modal.querySelector('#resetColors').addEventListener('click', () => {
         localStorage.removeItem('jsonViewerCustomColors');
-        
+
         // Varsayılan renkleri yükle
         const isLightTheme = document.body.classList.contains('light-theme');
-        
+
         if (isLightTheme) {
             modal.querySelector('#keyColor').value = '#2a7fff';
             modal.querySelector('#stringColor').value = '#28a745';
@@ -718,17 +815,17 @@ function createSettingsModal() {
             modal.querySelector('#booleanColor').value = '#56b6c2';
             modal.querySelector('#nullColor').value = '#e5c07b';
         }
-        
+
         // Renkleri sıfırla (CSS değişkenlerini varsayılana getir)
         document.documentElement.style.removeProperty('--key-color');
         document.documentElement.style.removeProperty('--string-color');
         document.documentElement.style.removeProperty('--number-color');
         document.documentElement.style.removeProperty('--boolean-color');
         document.documentElement.style.removeProperty('--null-color');
-        
+
         showToast('Renkler varsayılana döndürüldü');
     });
-    
+
     return modal;
 }
 
@@ -736,11 +833,11 @@ function createSettingsModal() {
 function showSettingsModal() {
     const modal = createSettingsModal();
     document.body.appendChild(modal);
-    
+
     // Mevcut renkleri input'lara yükle
     const customColors = JSON.parse(localStorage.getItem('jsonViewerCustomColors') || '{}');
     const isLightTheme = document.body.classList.contains('light-theme');
-    
+
     // Varsayılan renkler
     const defaultColors = isLightTheme ? {
         keyColor: '#2a7fff',
@@ -755,14 +852,14 @@ function showSettingsModal() {
         booleanColor: '#56b6c2',
         nullColor: '#e5c07b'
     };
-    
+
     // Input'ları mevcut veya varsayılan renklerle doldur
     modal.querySelector('#keyColor').value = customColors.keyColor || defaultColors.keyColor;
     modal.querySelector('#stringColor').value = customColors.stringColor || defaultColors.stringColor;
     modal.querySelector('#numberColor').value = customColors.numberColor || defaultColors.numberColor;
     modal.querySelector('#booleanColor').value = customColors.booleanColor || defaultColors.booleanColor;
     modal.querySelector('#nullColor').value = customColors.nullColor || defaultColors.nullColor;
-    
+
     // Modal animasyonu
     setTimeout(() => {
         modal.classList.add('show');
@@ -785,4 +882,4 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
     init();
-} 
+}
