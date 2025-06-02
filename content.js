@@ -25,6 +25,19 @@ function createToolbar() {
         localStorage.setItem('jsonViewerTheme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
     };
 
+    // Dışa Aktar butonu
+    const exportButton = document.createElement('button');
+    exportButton.classList.add('export-button');
+    exportButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>`;
+    exportButton.title = "Dışa Aktar";
+    exportButton.onclick = () => {
+        showExportOptions();
+    };
+
     // Yenile butonu
     const refreshButton = document.createElement('button');
     refreshButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -100,6 +113,7 @@ function createToolbar() {
 
     toolbar.appendChild(settingsButton);
     toolbar.appendChild(themeToggleButton);
+    toolbar.appendChild(exportButton);
     toolbar.appendChild(expandCollapseButton);
     toolbar.appendChild(refreshButton);
     toolbar.appendChild(copyButton);
@@ -647,6 +661,58 @@ function addStyles() {
             pointer-events: auto;
             transform: translateY(0);
         }
+
+        /* Dışa aktarma dropdown stilleri */
+        .export-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            width: 160px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .export-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .export-dropdown-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .export-dropdown-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .export-dropdown-item:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .export-dropdown-item svg {
+            width: 14px;
+            height: 14px;
+        }
     `;
     document.head.appendChild(styleElement);
 
@@ -670,7 +736,10 @@ function init() {
 
     if (isJsonString(bodyText)) {
         try {
-            const formattedJson = formatJSON(bodyText);
+            // Orijinal JSON verisi, daha sonra kullanmak için global bir değişkende sakla
+            window.originalJsonData = JSON.parse(bodyText.trim());
+
+            const formattedJson = formatJSON(window.originalJsonData);
             document.body.innerHTML = '';
 
             addStyles();
@@ -882,4 +951,289 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
     init();
+}
+
+// JSON'dan CSV formatına dönüştürme
+function jsonToCSV(jsonData) {
+    const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+
+    // Eğer JSON bir dizi değilse, dizi haline getir
+    const jsonArray = Array.isArray(data) ? data : [data];
+
+    if (jsonArray.length === 0) return '';
+
+    // Başlıkları oluştur (tüm objelerdeki unique keyleri birleştir)
+    const headers = [];
+    jsonArray.forEach(item => {
+        if (typeof item === 'object' && item !== null) {
+            Object.keys(item).forEach(key => {
+                if (!headers.includes(key)) {
+                    headers.push(key);
+                }
+            });
+        }
+    });
+
+    // CSV satırlarını oluştur
+    let csv = headers.join(',') + '\n';
+
+    jsonArray.forEach(item => {
+        const row = headers.map(header => {
+            const value = item[header];
+
+            // Değerin tipine göre düzenleme yap
+            if (value === null || value === undefined) {
+                return '';
+            } else if (typeof value === 'object') {
+                return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+            } else if (typeof value === 'string') {
+                return `"${value.replace(/"/g, '""')}"`;
+            } else {
+                return String(value);
+            }
+        });
+
+        csv += row.join(',') + '\n';
+    });
+
+    return csv;
+}
+
+// JSON'dan YAML formatına dönüştürme
+function jsonToYAML(jsonData) {
+    const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+    return convertToYAML(data, 0);
+}
+
+function convertToYAML(obj, indent = 0) {
+    const indentStr = '  '.repeat(indent);
+    let yaml = '';
+
+    if (Array.isArray(obj)) {
+        if (obj.length === 0) return '[]';
+
+        obj.forEach(item => {
+            yaml += indentStr + '- ';
+
+            if (typeof item === 'object' && item !== null) {
+                yaml += '\n' + convertToYAML(item, indent + 1);
+            } else {
+                yaml += formatYamlValue(item) + '\n';
+            }
+        });
+    } else if (typeof obj === 'object' && obj !== null) {
+        const keys = Object.keys(obj);
+        if (keys.length === 0) return '{}';
+
+        keys.forEach(key => {
+            yaml += indentStr + key + ': ';
+
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+                yaml += '\n' + convertToYAML(obj[key], indent + 1);
+            } else {
+                yaml += formatYamlValue(obj[key]) + '\n';
+            }
+        });
+    } else {
+        yaml += formatYamlValue(obj);
+    }
+
+    return yaml;
+}
+
+function formatYamlValue(value) {
+    if (value === null) return 'null';
+    if (typeof value === 'string') {
+        // Özel karakterler içeren string'leri tırnak içine al
+        if (/[:#{}[\],&*!|>'"%@`]/.test(value) || value === '' || /^\s|\s$/.test(value)) {
+            return `"${value.replace(/"/g, '\\"')}"`;
+        }
+        return value;
+    }
+    return String(value);
+}
+
+// JSON'u indir
+function downloadJSON(jsonData, filename = 'data.json') {
+    const data = typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData, null, 2);
+    downloadFile(data, filename, 'application/json');
+}
+
+// CSV'yi indir
+function downloadCSV(csvData, filename = 'data.csv') {
+    downloadFile(csvData, filename, 'text/csv');
+}
+
+// YAML'ı indir
+function downloadYAML(yamlData, filename = 'data.yaml') {
+    downloadFile(yamlData, filename, 'application/x-yaml');
+}
+
+// Genel dosya indirme fonksiyonu
+function downloadFile(data, filename, mimeType) {
+    const blob = new Blob([data], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+    showToast(`${filename} indirildi`);
+}
+
+// Dışa aktarma seçeneklerini göster
+function showExportOptions() {
+    // Eğer açık bir export dropdown varsa kapat
+    const existingDropdown = document.querySelector('.export-dropdown');
+    if (existingDropdown) {
+        document.body.removeChild(existingDropdown);
+        return;
+    }
+
+    // Toolbar konum bilgilerini al
+    const exportButton = document.querySelector('.export-button');
+    const buttonRect = exportButton.getBoundingClientRect();
+
+    // Dropdown oluştur
+    const dropdown = document.createElement('div');
+    dropdown.className = 'export-dropdown';
+
+    dropdown.innerHTML = `
+        <div class="export-dropdown-header">Dışa Aktar</div>
+        <div class="export-dropdown-item" data-format="json">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            JSON
+        </div>
+        <div class="export-dropdown-item" data-format="csv">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            CSV
+        </div>
+        <div class="export-dropdown-item" data-format="yaml">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            YAML
+        </div>
+    `;
+
+    // Dropdown'ı konumlandır
+    dropdown.style.top = `${buttonRect.bottom + window.scrollY + 5}px`;
+    dropdown.style.right = `${window.innerWidth - buttonRect.right - window.scrollX}px`;
+
+    // Click olaylarını ekle
+    dropdown.querySelectorAll('.export-dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const format = item.dataset.format;
+
+            // Orijinal JSON verisini al - global değişken olarak saklanan veriden al
+            try {
+                // JSON verisini elde etmek için init sırasında saklanan orijinal veriyi kullanıyoruz
+                if (!window.originalJsonData) {
+                    showToast('İşlenecek JSON verisi bulunamadı');
+                    return;
+                }
+
+                switch (format) {
+                    case 'json':
+                        downloadJSON(window.originalJsonData, 'data.json');
+                        break;
+                    case 'csv':
+                        const csvData = jsonToCSV(window.originalJsonData);
+                        if (csvData.trim() === '') {
+                            showToast('Bu JSON verisi CSV formatına dönüştürülemedi');
+                            return;
+                        }
+                        downloadCSV(csvData, 'data.csv');
+                        break;
+                    case 'yaml':
+                        const yamlData = jsonToYAML(window.originalJsonData);
+                        downloadYAML(yamlData, 'data.yaml');
+                        break;
+                }
+            } catch (e) {
+                console.error(`Error converting to ${format}:`, e);
+                showToast(`${format.toUpperCase()} formatına dönüştürme hatası`);
+            }
+
+            document.body.removeChild(dropdown);
+        });
+    });
+
+    // Dropdown dışına tıklandığında kapat
+    document.addEventListener('click', function closeDropdown(e) {
+        if (!dropdown.contains(e.target) && !exportButton.contains(e.target)) {
+            if (document.body.contains(dropdown)) {
+                document.body.removeChild(dropdown);
+            }
+            document.removeEventListener('click', closeDropdown);
+        }
+    });
+
+    // Dropdown'ı ekle ve göster
+    document.body.appendChild(dropdown);
+    setTimeout(() => dropdown.classList.add('show'), 10);
+}
+
+// JSON metnini temizleme fonksiyonu
+function cleanJSONText(text) {
+    // JSON metninden sözdizimsel olmayan karakterleri temizle
+    // Bu genellikle ekranda gösterilen numaralandırma, boşluklar vs. olabilir
+    try {
+        // İlk önce doğrudan parse etmeyi dene
+        JSON.parse(text);
+        return text;
+    } catch (e) {
+        // Olmadıysa temizleme işlemleri yap
+
+        // HTML etiketlerini kaldır
+        let cleaned = text.replace(/<[^>]*>/g, '');
+
+        // Gereksiz boşlukları düzenle
+        cleaned = cleaned.replace(/\s+/g, ' ').trim();
+
+        // { ve [ karakterlerinden önce her şeyi kaldır
+        const firstBrace = cleaned.indexOf('{');
+        const firstBracket = cleaned.indexOf('[');
+
+        let startIndex = -1;
+        if (firstBrace >= 0 && firstBracket >= 0) {
+            startIndex = Math.min(firstBrace, firstBracket);
+        } else if (firstBrace >= 0) {
+            startIndex = firstBrace;
+        } else if (firstBracket >= 0) {
+            startIndex = firstBracket;
+        }
+
+        if (startIndex >= 0) {
+            cleaned = cleaned.substring(startIndex);
+        }
+
+        // } ve ] karakterlerinden sonra her şeyi kaldır
+        const lastBrace = cleaned.lastIndexOf('}');
+        const lastBracket = cleaned.lastIndexOf(']');
+
+        let endIndex = -1;
+        if (lastBrace >= 0 && lastBracket >= 0) {
+            endIndex = Math.max(lastBrace, lastBracket);
+        } else if (lastBrace >= 0) {
+            endIndex = lastBrace;
+        } else if (lastBracket >= 0) {
+            endIndex = lastBracket;
+        }
+
+        if (endIndex >= 0) {
+            cleaned = cleaned.substring(0, endIndex + 1);
+        }
+
+        return cleaned;
+    }
 }
