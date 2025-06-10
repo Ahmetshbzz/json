@@ -6,6 +6,25 @@
 
 JSON Görüntüleyici Pro, tarayıcınızda JSON verilerini modern, okunaklı ve estetik bir şekilde görüntülemenizi sağlayan bir tarayıcı eklentisidir.
 
+## Ekran Görüntüleri
+
+<div align="center">
+  <h3>Açık Tema</h3>
+  <img src="images/1-light.png" alt="JSON Görüntüleyici Pro - Açık Tema" width="800">
+
+  <h3>Koyu Tema</h3>
+  <img src="images/1-dark.png" alt="JSON Görüntüleyici Pro - Koyu Tema" width="800">
+
+  <h3>API Performans Metrikleri</h3>
+  <img src="images/api.png" alt="API Performans Metrikleri" width="800">
+
+  <h3>Dışa Aktarma Seçenekleri</h3>
+  <img src="images/export.png" alt="Dışa Aktarma Seçenekleri" width="600">
+
+  <h3>Ayarlar Paneli</h3>
+  <img src="images/settings.png" alt="Ayarlar Paneli" width="600">
+</div>
+
 ## Özellikler
 
 - ✨ **Modern Arayüz**: Şık ve kullanıcı dostu bir arayüz ile JSON verileri daha okunaklı hale gelir
