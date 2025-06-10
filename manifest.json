@@ -14,10 +14,17 @@
     "scripting",
     "storage"
   ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_start"
     }
   ],
@@ -30,4 +37,4 @@
       "128": "icons/icon128.png"
     }
   }
-} 
+}

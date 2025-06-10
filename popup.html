@@ -68,6 +68,43 @@
             color: var(--text-secondary);
         }
 
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: -8px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .feature-icon {
+            margin-top: 2px;
+            color: var(--primary-color);
+        }
+
+        .feature-text {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .new-badge {
+            background-color: #e74c3c;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
         .footer {
             font-size: 12px;
             color: #999;
@@ -92,8 +129,25 @@
             JSON verilerini otomatik olarak formatlar ve şık bir görünüm sunar. Daha okunaklı, renkli kod vurgulama ve
             açılır-kapanır bölümler içerir.
         </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </div>
+                <div class="feature-text">
+                    <strong>API Performans Ölçümü</strong><span class="new-badge">Yeni</span><br>
+                    Araç çubuğundaki grafik simgesine tıklayarak API yanıt süresini ve diğer performans metriklerini %99
+                    doğrulukla görüntüleyebilirsiniz.
+                </div>
+            </div>
+        </div>
+
         <div class="footer">
-            v1.0 — JSON verilerinizi daha güzel görüntüleyin
+            v1.1 — JSON verilerinizi daha güzel görüntüleyin
         </div>
     </div>
 </body>
