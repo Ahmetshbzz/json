@@ -1434,7 +1434,7 @@ function displayPerformanceMetrics(metrics) {
                     <div class="metric-value">${formatTime(metrics.total)}</div>
                 </div>
                 <div class="performance-metric-item highlight">
-                    <div class="metric-label">API Yanıt Süresi:</div>
+                    <div class="metric-label">TTFB (Time to First Byte):</div>
                     <div class="metric-value">${formatTime(metrics.response)}</div>
                 </div>
             </div>
